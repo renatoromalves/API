@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-import os,re
+import os,re, datetime.datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
@@ -20,7 +20,7 @@ class Purchase(db.Model):
     sold_at = db.Column(db.DateTime, nullable = False)
     name = db.Column(db.String(50), unique=True, nullable = False)
     document = db.Column(db.String(11), unique=True, nullable=False)
-    purchase_total = db.Column(db.Float, nullable=False)
+    total = db.Column(db.Float, nullable=False)
 
     def validate_doc_len(self):
         if not re.match(r'\d{11}', cpf):
@@ -39,17 +39,19 @@ class Purchase(db.Model):
             return False
         return True
 
-
-
-class Products(db.Model):
+class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(1), nullable=False)
     value = db.Column(db.Float, nullable=False)
     qty = db.Column(db.Integer, nullable=False)
     purchase = db.relationship("Purchase",
-                    secondary=association_table)
+                    secondary=association_table, backref=db.backref('purchase', lazy = 'dynamic'))
 
     def product_total(self):
         return self.value * self.qty
 
-
+    def validate_product(self):
+        validation_list = ['A','B','C']
+        if self.type not in validation_list or len(self.type) !=1:
+            return False
+        return True
