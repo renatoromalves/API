@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-import os,re, datetime.datetime
+import os,re
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
@@ -22,13 +23,11 @@ class Purchase(db.Model):
     document = db.Column(db.String(11), unique=True, nullable=False)
     total = db.Column(db.Float, nullable=False)
 
-    def validate_doc_len(self):
-        if not re.match(r'\d{11}', cpf):
-            return False
-        return True
 
-    def validate_doc_digits(self):
-        numbers = [int(digit) for digit in self.customer_doc if digit.isdigit()]
+    def validate_doc(self):
+        if not re.match(r'\d{11}', self.document):
+            return False
+        numbers = [int(digit) for digit in self.document if digit.isdigit()]
         sum_of_products = sum(a * b for a, b in zip(numbers[0:9], range(10, 1, -1)))
         expected_digit = (sum_of_products * 10 % 11) % 10
         if numbers[9] != expected_digit:
@@ -44,14 +43,30 @@ class Product(db.Model):
     type = db.Column(db.String(1), nullable=False)
     value = db.Column(db.Float, nullable=False)
     qty = db.Column(db.Integer, nullable=False)
+    cashback = db.Column(db.Float, nullable=False)
     purchase = db.relationship("Purchase",
                     secondary=association_table, backref=db.backref('purchase', lazy = 'dynamic'))
 
-    def product_total(self):
-        return self.value * self.qty
-
     def validate_product(self):
         validation_list = ['A','B','C']
-        if self.type not in validation_list or len(self.type) !=1:
+        if len(self.type) !=1 or type(self.value)!=float or type(self.qty) != int:
             return False
         return True
+
+    def generate_cash_back(self):
+        self.total = round(float(self.value * self.qty),2)
+        if self.type=='A':
+            self.cashback = self.total*0.1
+        elif self.type=='B':
+            self.cashback = self.total*0.05
+        elif self.type=='C':
+            self.cashback = self.total * 0.07
+        else:
+            self.cashback = 0
+        return self.cashback
+
+def verify_values(purchase,products):
+    if purchase.total != sum(f.product_total() for f in products):
+        return False
+    return True
+
