@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import validates
 import os,re
 from datetime import datetime
 
@@ -24,6 +25,13 @@ class Purchase(db.Model):
     total = db.Column(db.Float, nullable=False)
 
 
+    def do_magic(self):
+        self.convert_upper()
+        self.validate_doc()
+
+    def convert_upper(self):
+        self.name = self.name.upper()
+
     def validate_doc(self):
         if not re.match(r'\d{11}', self.document):
             return False
@@ -38,6 +46,12 @@ class Purchase(db.Model):
             return False
         return True
 
+    def get_purchase_cashback(self):
+        self.purchase_cashback = 0
+        for item in self.purchase:
+            self.purchase_cashback += item.cashback
+
+
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(1), nullable=False)
@@ -47,13 +61,16 @@ class Product(db.Model):
     purchase = db.relationship("Purchase",
                     secondary=association_table, backref=db.backref('purchase', lazy = 'dynamic'))
 
+    def execute_all_methods(self):
+        self.validate_product()
+        self.calculate_cash_back()
+
     def validate_product(self):
-        validation_list = ['A','B','C']
         if len(self.type) !=1 or type(self.value)!=float or type(self.qty) != int:
             return False
         return True
 
-    def generate_cash_back(self):
+    def calculate_cash_back(self):
         self.total = round(float(self.value * self.qty),2)
         if self.type=='A':
             self.cashback = self.total*0.1
@@ -66,7 +83,6 @@ class Product(db.Model):
         return self.cashback
 
 def verify_values(purchase,products):
-    if purchase.total != sum(f.product_total() for f in products):
+    if purchase.total != sum(f.product_total for f in products):
         return False
     return True
-
