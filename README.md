@@ -4,12 +4,10 @@ Criada uma api de cadastro e armazenamento de informações a respeito de cashba
 Para realizar um teste em sua máquina, faça o clone do repositório em sua máquina e instale os requirements.
 Após isso, pelo terminal, vá até a pasta em que se encontra o arquivo 'walet.py' e execute o comando 'python walet.py'
 
-Segue modelo de request através da library requests:
-
-
 Através da rota "/cashback" é possível o envio de informaçõs em formato application/json desde que siga as seguintes regras:
 
 1 - Seja utilizado o token específico para autenticação (authentication: 'sha256$BnV47sednVthpJbS$0321c795cb19b49081d3dac3aaff28eaff74e92c24ab78e8051768dd539105ff')
+
 2 - Tenha os seguintes campos obrigatórios (além do token):
   2.1 - sold_at (formato: YYYY-mm-dd HH:MM:SS)
   2.2 - customer
@@ -36,6 +34,9 @@ Através da rota "/cashback" é possível o envio de informaçõs em formato app
 6 - É feito request para a api da mais todos, informando documento do consumidor e o valor total do cashback
   6.1 - Caso a resposta da api não seja positiva, é retornada informação de erro de comunicação
   6.2 - Caso a comunicação seja bem sucedida, é retornado json informando os valores inseridos, o documento e a mensagem "Cashback successfully created".
+
+
+Segue modelo de request através da library requests:
 
 r = requests.post(mock_url, data=json.dumps(dicionário de informações), headers=mock_header)
 
