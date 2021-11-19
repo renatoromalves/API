@@ -43,3 +43,23 @@ r = requests.post(mock_url, data=json.dumps(dicionário de informações), heade
 obs: mock_url será a url padrão do flask (quando executado ele mostra o ip e porta) + "\cashback"
 obs2: mock_header deve ser {'Content-Type': 'application/json'}
 ob3: data deve ser transferido como json, por isso json.dumps(dicionário de informações)
+
+Dificuldades encontradas:
+Relacionamento de bancos
+Criação em si da API
+
+Buscas realizadas:
+SQLalchemy
+SQLalchemy Many to Many
+Flask API
+Flask API Authentication
+
+fontes:
+https://flask-sqlalchemy.palletsprojects.com/en/2.x/
+https://www.sqlalchemy.org/
+https://pt.stackoverflow.com/
+https://stackoverflow.com/
+https://youtu.be/WxGBoY5iNXY
+https://youtu.be/J5bIPtEbS0Q
+https://youtu.be/RIoC1YOY4yc
+https://youtu.be/OvhoYbjtiKc
