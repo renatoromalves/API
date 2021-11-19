@@ -1,9 +1,19 @@
 # API
 Criada uma api de cadastro e armazenamento de informações a respeito de cashback.
 
+Para realizar um teste em sua máquina, faça o clone do repositório em sua máquina e instale os requirements.
+Após isso, pelo terminal, vá até a pasta em que se encontra o arquivo 'walet.py' e execute o comando 'python walet.py'
+
+Segue modelo de request através da library requests:
+r = requests.post(mock_url, data=json.dumps(dicionário de informações), headers=mock_header)
+
+obs: mock_url será a url padrão do flask (quando executado ele mostra o ip e porta) + "\cashback"
+obs2: mock_header deve ser {'Content-Type': 'application/json'}
+ob3: data deve ser transferido como json, por isso json.dumps(dicionário de informações)
+
 Através da rota "/cashback" é possível o envio de informaçõs em formato application/json desde que siga as seguintes regras:
 
-1 - Seja utilizado o token específico para autenticação (mocktoken = 'sha256$BnV47sednVthpJbS$0321c795cb19b49081d3dac3aaff28eaff74e92c24ab78e8051768dd539105ff')
+1 - Seja utilizado o token específico para autenticação (authentication: 'sha256$BnV47sednVthpJbS$0321c795cb19b49081d3dac3aaff28eaff74e92c24ab78e8051768dd539105ff')
 2 - Tenha os seguintes campos obrigatórios (além do token):
   2.1 - sold_at (formato: YYYY-mm-dd HH:MM:SS)
   2.2 - customer
