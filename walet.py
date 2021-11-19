@@ -37,7 +37,6 @@ class Purchase(db.Model):
             return False
         if not self.validate_doc():
             return False
-        self.get_purchase_cashback()
         return True
 
     def check_date_hour(self):
@@ -81,7 +80,7 @@ class Purchase(db.Model):
             return True
 
     def to_json(self):
-        return {'document': self.document, 'cashback': self.purchase_cashback}
+        return {'document': self.document, 'cashback': self.cashback}
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -129,7 +128,6 @@ class Product(db.Model):
 def insert_cashback():
     clear_session()
     body = request.get_json()
-    print(body['customer'])
     if not check_password_hash(body['authentication'], password):
         return create_response(403, 'error', {}, "Invalid autentication key")
 
@@ -141,13 +139,16 @@ def insert_cashback():
         purchase = Purchase(sold_at=body['sold_at'], name=body['customer']['name'],document=body['customer']['document'],total=body['total'])
         products = body.get('products')
         if not purchase.execute_all_methods():
-            return create_response(400, 'purchase error', {error: 'purchase information'}, 'Invalid purchase information')
+            print('Invalid purchase information')
+            return create_response(400, 'purchase error', {'error': 'purchase information'}, 'Invalid purchase information')
         if not purchase.check_date_hour():
+            print('Invalid purchase date')
             return create_response(400, 'purchase error', {'error':'date'}, 'Invalid purchase date')
         if not add_products(purchase_obj=purchase,items=products):
-
+            print('Invalid product information')
             return create_response(400, 'product error', {'error':'product information'}, 'Invalid product information')
         print('cheguei aqui')
+        purchase.get_purchase_cashback()
         db.session.add(purchase)
         print('cheguei aqui 2')
         db.session.commit()
@@ -160,28 +161,6 @@ def insert_cashback():
         print(e)
         return create_response(400, 'error', {'error':e}, 'Error creating cashback')
 
-@app.route("/teste/api", methods=['POST'])
-def teste():
-    try:
-        body = request.get_json(force=True)
-    except Exception as e:
-        print(e)
-        return create_response(400, 'erro', {e}, 'errooooo no body')
-    print('entrei aqui')
-    try:
-
-        print('peguei o body')
-        print(body)
-        return body
-    except Exception as e:
-        print(e)
-    return create_response(400,'erro',{e},'errooooo')
-
-
-
-@app.route('/')
-def testando_tela():
-    return create_response(200, 'teste ok', {}, 'Teste Get')
 
 ### functions to validate and show api information
 def add_products(purchase_obj, items):
@@ -202,7 +181,7 @@ def create_response(status, nome_conteudo, conteudo, message=False):
     return Response(json.dumps(body), status=status, mimetype='application/json')
 
 def more_everyone_api(data):
-    r = requests.post(mock_url, data=data, headers=mock_header)
+    r = requests.post(mock_url, data=json.dumps(data), headers=mock_header)
     if r.status_code != 201:
         return False
     return True
@@ -226,5 +205,6 @@ def check_received_params(params):
 def clear_session():
     db.session.flush()
     db.session.rollback()
+
 if __name__ == "__main__":
     app.run()
