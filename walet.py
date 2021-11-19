@@ -1,6 +1,5 @@
 from flask import Flask, request, Response
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import validates
 import os,re,json
 from datetime import datetime, timedelta
 import requests
@@ -28,14 +27,13 @@ association_table = db.Table('association', db.Model.metadata,
 class Purchase(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     sold_at = db.Column(db.DateTime, nullable = False)
-    name = db.Column(db.String(50), unique=True, nullable = False)
-    document = db.Column(db.String(11), unique=True, nullable=False)
+    name = db.Column(db.String(50), nullable = False)
+    document = db.Column(db.String(11), nullable=False)
     total = db.Column(db.Float, nullable=False)
 
 
     def execute_all_methods(self):
-        self.convert_upper()
-        if not self.check_date_hour:
+        if not self.adjust_types():
             return False
         if not self.validate_doc():
             return False
@@ -43,17 +41,23 @@ class Purchase(db.Model):
         return True
 
     def check_date_hour(self):
-        self.sold_at = datetime.strptime(self.sold_at,('%Y-%m-%d %H:%M:%S'))
         limit_max,limit_min = datetime.now() + timedelta(minutes=1), datetime.now() - timedelta(minutes=1)
         if limit_min < self.sold_at < limit_max:
             return True
         return False
 
-    def convert_upper(self):
-        self.name = self.name.upper()
+    def adjust_types(self):
+        try:
+            self.name = self.name.upper()
+            self.sold_at = datetime.strptime(self.sold_at, ('%Y-%m-%d %H:%M:%S'))
+            self.total = float(self.total)
+        except Exception as e:
+            print(e)
+            return False
+        return True
 
     def validate_doc(self):
-        if not re.match(r'\d{11}', self.document):
+        if not re.match(r'\d{11}', self.document): # or self.document=='00000000000': # excluir a validação de 0 pois sempre será válida.
             return False
         numbers = [int(digit) for digit in self.document if digit.isdigit()]
         sum_of_products = sum(a * b for a, b in zip(numbers[0:9], range(10, 1, -1)))
@@ -67,7 +71,7 @@ class Purchase(db.Model):
         return True
 
     def get_purchase_cashback(self):
-        self.purchase_cashback = sum(item.cashback for item in self.purchase)
+        self.cashback = sum(item.cashback for item in self.purchase)
 
     def verify_values(self):
         if self.total != sum(item.total for item in self.products):
@@ -118,6 +122,67 @@ class Product(db.Model):
             self.cashback = 0
         return self.cashback
 
+
+
+
+@app.route('/cashback', methods=['POST'])
+def insert_cashback():
+    clear_session()
+    body = request.get_json()
+    print(body['customer'])
+    if not check_password_hash(body['authentication'], password):
+        return create_response(403, 'error', {}, "Invalid autentication key")
+
+    checked_ok = check_received_params(body)
+    if checked_ok != True:
+        return create_response(400, 'error', {}, checked_ok)
+
+    try:
+        purchase = Purchase(sold_at=body['sold_at'], name=body['customer']['name'],document=body['customer']['document'],total=body['total'])
+        products = body.get('products')
+        if not purchase.execute_all_methods():
+            return create_response(400, 'purchase error', {error: 'purchase information'}, 'Invalid purchase information')
+        if not purchase.check_date_hour():
+            return create_response(400, 'purchase error', {'error':'date'}, 'Invalid purchase date')
+        if not add_products(purchase_obj=purchase,items=products):
+
+            return create_response(400, 'product error', {'error':'product information'}, 'Invalid product information')
+        print('cheguei aqui')
+        db.session.add(purchase)
+        print('cheguei aqui 2')
+        db.session.commit()
+        if not more_everyone_api(purchase.to_json()):
+            return create_response(400, 'communication error', {'error': 'error communicating to maisTodos Api'}, 'Error creating cashback on root')
+        print('inserido')
+        return create_response(201, 'cashback_info', purchase.to_json(), 'Cashback successfully created')
+
+    except Exception as e:
+        print(e)
+        return create_response(400, 'error', {'error':e}, 'Error creating cashback')
+
+@app.route("/teste/api", methods=['POST'])
+def teste():
+    try:
+        body = request.get_json(force=True)
+    except Exception as e:
+        print(e)
+        return create_response(400, 'erro', {e}, 'errooooo no body')
+    print('entrei aqui')
+    try:
+
+        print('peguei o body')
+        print(body)
+        return body
+    except Exception as e:
+        print(e)
+    return create_response(400,'erro',{e},'errooooo')
+
+
+
+@app.route('/')
+def testando_tela():
+    return create_response(200, 'teste ok', {}, 'Teste Get')
+
 ### functions to validate and show api information
 def add_products(purchase_obj, items):
     for item in items:
@@ -129,15 +194,15 @@ def add_products(purchase_obj, items):
             product.purchase.append(purchase_obj)
     return True
 
-def create_response(status, nome_conteudo, conteudo, mensagem=False):
+def create_response(status, nome_conteudo, conteudo, message=False):
     body = {}
     body[nome_conteudo] = conteudo
-    if mensagem:
-        body['mensagem'] = mensagem
+    if message:
+        body['message'] = message
     return Response(json.dumps(body), status=status, mimetype='application/json')
 
 def more_everyone_api(data):
-    r = requests.post(mock_url, data=mock_data, headers=mock_header)
+    r = requests.post(mock_url, data=data, headers=mock_header)
     if r.status_code != 201:
         return False
     return True
@@ -158,30 +223,8 @@ def check_received_params(params):
                 return 'Missing product parameter'
     return True
 
-@app.route('/api/cashback', methods=['POST'])
-def insere_cashback():
-    body = request.get_json()
-    checked_ok = check_received_params(body)
-    if checked_ok != True:
-        return create_response(400, 'error', {}, checked_ok)
-
-    try:
-        purchase = Purchase(sold_at=body['sold_at'], name=body['customer']['name'],document=body['customer']['document'],total=body['total'])
-        products = body.get('products')
-        if not add_products(purchase_obj=purchase,items=products):
-            return create_response(400, 'error', {}, 'Invalid product information')
-        purchase.execute_all_methods()
-        db.session.add(purchase)
-        db.session.commit()
-        more_everyone_api(purchase.to_json())
-        return create_response(201, 'usuario', {}, 'Cashback successfully created')
-    except Exception as e:
-        print(e)
-        return create_response(400, 'usuario', {}, 'Error creating cashback')
-
-#check_password_hash(auth.password, password)
-
-
-
+def clear_session():
+    db.session.flush()
+    db.session.rollback()
 if __name__ == "__main__":
     app.run()
