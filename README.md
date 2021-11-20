@@ -20,7 +20,7 @@ Através da rota "/cashback" é possível o envio de informaçõs em formato app
     3.4.1 - type (string de caracter único)
     3.4.2 - value (receberemos como str, mas será tratado como float)
     3.4.3 - qty (receberemos como str, mas será tratado como int)
-    
+   
 3 - Recebendo estas informações são feitas as seguintes validações:
   3.1 - Ajustes em todas as informações recebidas como string, transformando datetime em datetime
   3.2 - Verificação de CPF (atualmente aceita o CPF 00000000000, mas já está com regra implementada, porem comentada, para permitir os testes)
