@@ -26,7 +26,7 @@ Através da rota "/cashback" é possível o envio de informaçõs em formato app
   3.2 - Verificação de CPF (atualmente aceita o CPF 00000000000, mas já está com regra implementada, porem comentada, para permitir os testes)
   3.3 - Verificação da data (se a data recebida for 1 minuto maior ou menor do que a data do processamento, será retornada data inválida)
   3.4 - Verificação de formato do type de produto.
-
+ 
 4 - Feitas as verificações iniciamos o cálculo de cashback
   4.1 - Primeiramente é analisado se o produto indicado é "A", "B" ou "C", que têm cashbacks respectivos de 10%, 5% e 7%, caso não seja nenhum destes, o cashback é 0
   4.2 - Após os cálculos individuais de cashback, é feito o cálculo total da compra (purchase)
