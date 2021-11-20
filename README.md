@@ -49,7 +49,7 @@ ob3: data deve ser transferido como json, por isso json.dumps(dicionário de inf
 Dificuldades encontradas:
 Relacionamento de bancos
 Criação em si da API
-
+ 
 Buscas realizadas:
 SQLalchemy
 SQLalchemy Many to Many
