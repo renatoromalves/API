@@ -44,11 +44,36 @@ r = requests.post(mock_url, data=json.dumps(dicionário de informações), heade
 
 obs: mock_url será a url padrão do flask (quando executado ele mostra o ip e porta) + "\cashback"
 obs2: mock_header deve ser {'Content-Type': 'application/json'}
-ob3: data deve ser transferido como json, por isso json.dumps(dicionário de informações)
+obs3: data deve ser transferido como json, por isso json.dumps(dicionário de informações)
+obs4: padrão de corpo de requisição:
+{
+    "authentication": "sha256$BnV47sednVthpJbS$0321c795cb19b49081d3dac3aaff28eaff74e92c24ab78e8051768dd539105ff",
+    "sold_at": "2026-01-02 00:00:00",
+    "customer": {
+       "document": "00000000000",
+       "name": "JOSE DA SILVA"
+    },
+    "total": "100.00",
+    "products": [
+       {
+          "type": "A",
+          "value": "10.00",
+          "qty": 1
+       },
+       {
+          "type": "B",
+          "value": "10.00",
+          "qty": 9
+       }
+    ]
+}
+
+
 
 Dificuldades encontradas:
-Relacionamento de bancos
-Criação em si da API
+Relacionamento de bancos.
+Criação em si da API.
+Identificação no postman do excesso de "," na requisição padrão.
  
 Buscas realizadas:
 SQLalchemy
@@ -65,4 +90,5 @@ https://youtu.be/WxGBoY5iNXY
 https://youtu.be/J5bIPtEbS0Q
 https://youtu.be/RIoC1YOY4yc
 https://youtu.be/OvhoYbjtiKc
+
 
