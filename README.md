@@ -99,24 +99,20 @@ Criação em si da API.
 Identificação no postman do excesso de "," na requisição padrão.
  
 Buscas realizadas:
-
-SQLalchemy
-
-SQLalchemy Many to Many
-
-Flask API
-
-Flask API Authentication
+- SQLalchemy
+- SQLalchemy Many to Many
+- Flask API
+- Flask API Authentication
 
 fontes:
 
-https://flask-sqlalchemy.palletsprojects.com/en/2.x/
-https://www.sqlalchemy.org/
-https://pt.stackoverflow.com/
-https://stackoverflow.com/
-https://youtu.be/WxGBoY5iNXY
-https://youtu.be/J5bIPtEbS0Q
-https://youtu.be/RIoC1YOY4yc
-https://youtu.be/OvhoYbjtiKc
+- https://flask-sqlalchemy.palletsprojects.com/en/2.x/
+- https://www.sqlalchemy.org/
+- https://pt.stackoverflow.com/
+- https://stackoverflow.com/
+- https://youtu.be/WxGBoY5iNXY
+- https://youtu.be/J5bIPtEbS0Q
+- https://youtu.be/RIoC1YOY4yc
+- https://youtu.be/OvhoYbjtiKc
 
 
