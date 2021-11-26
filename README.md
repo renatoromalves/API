@@ -56,7 +56,7 @@ Através da rota "/cashback" é possível o envio de informaçõs em formato app
 
 Segue modelo de request através da library requests:
 
-r = requests.post(mock_url, data=json.dumps(dicionário de informações), headers=mock_header)
+    r = requests.post(mock_url, data=json.dumps(dicionário de informações), headers=mock_header)
 
 obs: mock_url será a url padrão do flask (quando executado ele mostra o ip e porta) + "\cashback"
 
