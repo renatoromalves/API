@@ -65,3 +65,26 @@ https://youtu.be/WxGBoY5iNXY
 https://youtu.be/J5bIPtEbS0Q
 https://youtu.be/RIoC1YOY4yc
 https://youtu.be/OvhoYbjtiKc
+
+Padrão de requisição:
+{
+    "authentication": "sha256$BnV47sednVthpJbS$0321c795cb19b49081d3dac3aaff28eaff74e92c24ab78e8051768dd539105ff",
+    "sold_at": "2026-01-02 00:00:00",
+    "customer": {
+       "document": "00000000000",
+       "name": "JOSE DA SILVA"
+    },
+    "total": "100.00",
+    "products": [
+       {
+          "type": "A",
+          "value": "10.00",
+          "qty": 1
+       },
+       {
+          "type": "B",
+          "value": "10.00",
+          "qty": 9
+       }
+    ]
+}
