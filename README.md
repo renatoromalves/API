@@ -11,14 +11,23 @@ Através da rota "/cashback" é possível o envio de informaçõs em formato app
 1 - Seja utilizado o token específico para autenticação (authentication: 'sha256$BnV47sednVthpJbS$0321c795cb19b49081d3dac3aaff28eaff74e92c24ab78e8051768dd539105ff')
 
 2 - Tenha os seguintes campos obrigatórios (além do token):
+
   2.1 - sold_at (formato: YYYY-mm-dd HH:MM:SS)
+  
   2.2 - customer
+  
     2.2.1 - document (11 dígitos sem '.' nem '-')
+    
     2.2.2 - name (limitado a 50 caracteres para o banco de dados)
+    
   2.3 - total (receberemos como str, mas será tratado como float)
+  
   3.4 - products (tipo: lista de dicionarios) e dentro de cada dicionário:
+  
     3.4.1 - type (string de caracter único)
+    
     3.4.2 - value (receberemos como str, mas será tratado como float)
+    
     3.4.3 - qty (receberemos como str, mas será tratado como int)
    
 3 - Recebendo estas informações são feitas as seguintes validações:
