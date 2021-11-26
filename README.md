@@ -90,13 +90,10 @@ obs4: padrão de corpo de requisição:
 
 
 
-Dificuldades encontradas:
-
-Relacionamento de bancos.
-
-Criação em si da API.
-
-Identificação no postman do excesso de "," na requisição padrão.
+ Dificuldades encontradas:
+ Relacionamento de bancos.
+ Criação em si da API.
+ Identificação no postman do excesso de "," na requisição padrão.
  
 Buscas realizadas:
 - SQLalchemy
