@@ -111,19 +111,12 @@ Flask API Authentication
 fontes:
 
 https://flask-sqlalchemy.palletsprojects.com/en/2.x/
-
 https://www.sqlalchemy.org/
-
 https://pt.stackoverflow.com/
-
 https://stackoverflow.com/
-
 https://youtu.be/WxGBoY5iNXY
-
 https://youtu.be/J5bIPtEbS0Q
-
 https://youtu.be/RIoC1YOY4yc
-
 https://youtu.be/OvhoYbjtiKc
 
 
