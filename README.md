@@ -118,9 +118,12 @@ https://pt.stackoverflow.com/
 
 https://stackoverflow.com/
 
-https://youtu.be/WxGBoY5iNXY \n
+https://youtu.be/WxGBoY5iNXY
+
 https://youtu.be/J5bIPtEbS0Q
+
 https://youtu.be/RIoC1YOY4yc
+
 https://youtu.be/OvhoYbjtiKc
 
 
